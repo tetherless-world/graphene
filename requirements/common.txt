@@ -41,7 +41,7 @@ Jinja2==2.10.1
 jinja2-time==0.2.0
 keepalive==0.5
 kombu==4.6.4
-lxml==4.3.4
+lxml==4.6.3
 Markdown==3.1.1
 MarkupSafe==1.1.1
 nltk==3.4.5
