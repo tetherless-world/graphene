@@ -1,5 +1,34 @@
 <template>
   <div class="sparql-template-page">
+    <div
+      class="button-row"
+      v-if="!loading"
+    >
+      <div>
+        <md-button
+          class="md-icon-button"
+          @click.native.prevent="selectQueryForVizEditor()"
+        >
+          <md-tooltip
+            class="utility-bckg"
+            md-direction="bottom"
+          >
+            Select current query and return to Viz Editor
+          </md-tooltip>
+          <md-icon>check</md-icon>
+        </md-button>
+        <md-button
+          class="md-icon-button"
+          @click.native.prevent="toVizEditor()"
+        >
+          <md-tooltip
+            class="utility-bckg"
+            md-direction="bottom"
+          > Return to viz editor </md-tooltip>
+          <md-icon>arrow_back</md-icon>
+        </md-button>
+      </div>
+    </div>
     <md-toolbar>
       <h3 class="md-title">Query Template</h3>
     </md-toolbar>
@@ -48,7 +77,7 @@
         :startOpen="false"
         title="SPARQL Query"
       >
-        <yasqe :value="query"></yasqe>
+        <yasqe :value="query" readonly="true"></yasqe>
       </accordion>
     </div>
     <div class="results">
@@ -72,7 +101,9 @@
 
 <script>
 import yaml from "js-yaml";
+import { mapMutations } from 'vuex';
 import { querySparql } from "../../../utilities/sparql";
+import { goToView, VIEW_URIS, DEFAULT_VIEWS } from "../../../utilities/views";
 import debounce from "../../../utilities/debounce"
 
 const TextSegmentType = Object.freeze({
@@ -142,6 +173,14 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('vizEditor', ['setQuery']),
+    selectQueryForVizEditor() {
+      this.setQuery(this.query)
+      this.toVizEditor()
+    },
+    toVizEditor() {
+      goToView(VIEW_URIS.CHART_EDITOR, DEFAULT_VIEWS.NEW)
+    },
     shiftTemplate(amount) {
       let newIndex = this.currentIndex + amount;
       while (newIndex >= this.totalTemplateCount) {

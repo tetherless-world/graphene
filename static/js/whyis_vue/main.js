@@ -3,6 +3,7 @@ import * as VueMaterial from 'vue-material'
 import axios from 'axios'
 import './modules'
 import './components'
+import {store} from './store'
 import Header from './components/utils/header'
 import Drawer from './components/utils/drawer'
 // import dialogBox from './components/utils/dialog'
@@ -29,6 +30,7 @@ if (typeof (ATTRIBUTES) !== 'undefined') {
 new Vue({
   el: '#page',
   data,
+  store,
   components: {
     mdAppToolbar: Header,
     mdAppDrawer: Drawer,

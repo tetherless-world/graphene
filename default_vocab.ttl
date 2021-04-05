@@ -538,7 +538,8 @@ whyis:ChartClass a owl:Class;
   whyis:hasView "chart_gallery.html";
   whyis:newInstanceView "chart_new.html";
   whyis:manageInstanceView "chart_manage.html";
-  whyis:restoreInstanceView "chart_restore.html".
+  whyis:restoreInstanceView "chart_restore.html";
+  whyis:voyagerView "chart_voyager.html".
 
 whyis:voyagerView rdfs:subPropertyOf whyis:hasView;
   rdfs:domain whyis:ChartClass;
@@ -560,4 +561,4 @@ whyis:SparqlTemplateClass a owl:Class;
   rdfs:subClassOf owl:Class;
   whyis:hasView "sparql_templates.html".
 
-whyis:SparqlTemplates a whyis:SparqlTemplateClass.
+whyis:SparqlTemplate a whyis:SparqlTemplateClass.

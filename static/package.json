@@ -21,7 +21,9 @@
     "vue": "^2.6.10",
     "vue-material": "^1.0.0-beta-11",
     "vue-prism-editor": "^0.3.0",
-    "vue-splitpane": "^1.0.6"
+    "vue-splitpane": "^1.0.6",
+    "vuex": "^3.6.2",
+    "vuex-persistedstate": "^3.2.0"
   },
   "devDependencies": {
     "css-loader": "^5.2.4",

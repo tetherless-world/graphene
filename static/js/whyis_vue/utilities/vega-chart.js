@@ -32,10 +32,12 @@ const defaultSpec = {
 }
 
 const defaultChart = {
+  uri: null,
   baseSpec: defaultSpec,
   query: defaultQuery,
   title: 'Example Bar Chart',
-  description: 'An example chart that looks up the frequency for each class in the knowledge graph.'
+  description: 'An example chart that looks up the frequency for each class in the knowledge graph.',
+  depiction: null,
 }
 
 const chartType = 'http://semanticscience.org/resource/Chart'
@@ -224,4 +226,4 @@ function buildSparqlSpec (baseSpec, sparqlResults) {
   return spec
 }
 
-export { getDefaultChart, loadChart, saveChart, copyChart, getCharts, buildSparqlSpec}
+export { getDefaultChart, loadChart, saveChart, copyChart, getCharts, buildSparqlSpec, transformSparqlData}

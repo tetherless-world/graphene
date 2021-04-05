@@ -10,7 +10,7 @@
           <md-button
             class="md-icon-button"
             @click.native.prevent="saveAsChart"
-            v-if="voyagerSpec"
+            v-if="!isNewChart && voyagerSpec"
           >
             <md-tooltip
               class="utility-bckg"
@@ -19,6 +19,19 @@
               Save current spec as new chart
             </md-tooltip>
             <md-icon>save</md-icon>
+          </md-button>
+          <md-button
+            class="md-icon-button"
+            @click.native.prevent="selectSpec"
+            v-if="isNewChart && voyagerSpec"
+          >
+            <md-tooltip
+              class="utility-bckg"
+              md-direction="bottom"
+            >
+              Select current spec and return to Viz Editor
+            </md-tooltip>
+            <md-icon>check</md-icon>
           </md-button>
           <md-button
             class="md-icon-button"
@@ -34,7 +47,8 @@
       </div>
     </div>
     <div class="viz-sample__header viz-u-mgbottom">
-      <span class="dv-title">Data Voyager</span><span v-if="chart && chart.title">: {{chart.title}}</span>
+      <span class="dv-title">Data Voyager</span>
+      <span v-if="!isNewChart && chart && chart.title">: {{chart.title}}</span>
     </div>
     <div
       class="loading-dialog"
@@ -57,21 +71,20 @@
 </template>
 
 <script>
+import { mapGetters, mapActions, mapMutations } from 'vuex';
 import { Slug } from "../../../../modules";
 import {
   copyChart,
-  loadChart,
   saveChart,
-  buildSparqlSpec
+  transformSparqlData
 } from "../../../../utilities/vega-chart";
 import { querySparql } from "../../../../utilities/sparql";
-import { DEFAULT_VIEWS, goToView } from "../../../../utilities/views";
+import { DEFAULT_VIEWS, VIEW_URIS, goToView } from "../../../../utilities/views";
 
 export default {
   data() {
     return {
       loading: true,
-      chart: null,
       voyagerSpec: null,
       specJsonEditorOpts: {
         mode: "code",
@@ -79,20 +92,24 @@ export default {
       }
     };
   },
+  computed: {
+    ...mapGetters('vizEditor', ['chart']),
+    isNewChart () {
+      return this.pageUri === VIEW_URIS.CHART_EDITOR
+    },
+  },
   methods: {
+    ...mapActions('vizEditor', ['loadChart']),
+    ...mapMutations('vizEditor', ['setBaseSpec']),
     slugify: Slug,
-    loadChart() {
+    async loadData() {
       this.loading = true;
-      loadChart(this.pageUri)
-        .then(chart => {
-          this.chart = chart;
-          return querySparql(chart.query);
-        })
-        .then(sparqlResults => {
-          const spec = buildSparqlSpec(this.chart.baseSpec, sparqlResults);
-          this.data = spec.data;
-        })
-        .finally(() => (this.loading = false));
+      if (!this.isNewChart) {
+        await this.loadChart()
+      }
+      const sparqlResults = await querySparql(this.chart.query);
+      this.data = { values: transformSparqlData(sparqlResults) };
+      this.loading = false
     },
     saveAsChart() {
       this.loading = true;
@@ -105,12 +122,26 @@ export default {
         goToView(newChart.uri, DEFAULT_VIEWS.EDIT)
       );
     },
+    selectSpec() {
+      this.setBaseSpec(this.voyagerSpec)
+      this.goToChartEditor()
+    },
     goToChartView() {
       goToView(this.pageUri, DEFAULT_VIEWS.VIEW);
+    },
+    goToChartEditor() {
+      goToView(VIEW_URIS.CHART_EDITOR, DEFAULT_VIEWS.NEW);
+    },
+    goBack() {
+      if (this.isNewChart) {
+        this.goToChartEditor()
+      } else {
+        this.goToChartView()
+      }
     }
   },
   mounted() {
-    this.loadChart();
+    this.loadData();
   }
 };
 </script>
