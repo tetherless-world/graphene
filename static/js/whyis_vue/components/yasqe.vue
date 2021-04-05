@@ -18,6 +18,10 @@ export default Vue.component('yasqe', {
         showBtns: {
             type: Boolean,
             default: false
+        },
+        readOnly: {
+            type: Boolean,
+            default: false
         }
     },
     mounted () {
@@ -37,10 +41,11 @@ export default Vue.component('yasqe', {
                     },
                 }
             },
-            readOnly: true,
+            readOnly: this.readOnly,
         })
         this.yasqe.setValue(this.value)
         this.yasqe.on('changes', () => {
+            console.log('eyyy')
             yasqeContext.$emit('input', yasqeContext.yasqe.getValue())
         })
         this.yasqe.setSize("100%", "100%")

@@ -25,15 +25,29 @@
           </div>
         </div>
         <div class="viz-editor viz-editor-show" id="sparqlc">
-          <yasqe v-if="chart.query"
-            v-model="chart.query"
-            v-on:query-success="onQuerySuccess">
+          <md-button
+            class="md-raised"
+            @click="goToSparqlTemplates()"
+          >
+            Build query from template
+          </md-button>
+          <yasqe v-if="query"
+            :value="query"
+            @input="setQuery"
+            @query-success="onQuerySuccess">
           </yasqe>
         </div>
         <div class="viz-editor" id="vegac">
           <div id="vega-spec-editor" style="height:100%">
-            <v-jsoneditor v-if="chart.baseSpec"
-              v-model="chart.baseSpec"
+            <md-button
+              class="md-raised"
+              @click="goToDataVoyager()"
+            >
+              Browse Data Voyager
+            </md-button>
+            <v-jsoneditor v-if="baseSpec"
+              :value="baseSpec"
+              @input="setBaseSpec"
               :options="specJsonEditorOpts"
               :error="onSpecJsonError" style="height: 98%">
             </v-jsoneditor>
@@ -44,13 +58,13 @@
             <div style="display: block; flex: 1">
               <md-field class="chart-title-field viz-u-maxwidth">
                 <label for="chart-title">Title</label>
-                <md-input name="chart-title" id="chart-title" v-model="chart.title"/>
+                <md-input name="chart-title" id="chart-title" :value="title" @input="setTitle"/>
               </md-field>
             </div>
             <div style="display: block;">
               <md-field class="chart-description-field viz-u-maxwidth">
                 <label for="chart-description">Description</label>
-                <md-textarea name="chart-description" id="chart-description" v-model="chart.description"/>
+                <md-textarea name="chart-description" id="chart-description" :value="description" @input="setDescription"/>
               </md-field>
             </div>
             <div style="display: block;">
