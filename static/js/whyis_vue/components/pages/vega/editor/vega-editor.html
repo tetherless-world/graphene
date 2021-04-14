@@ -34,14 +34,16 @@
           <yasqe v-if="query"
             :value="query"
             @input="setQuery"
-            @query-success="onQuerySuccess">
-          </yasqe>
+            @query-success="onQuerySuccess"
+            @query-error="onQueryError"
+          />
         </div>
         <div class="viz-editor" id="vegac">
           <div id="vega-spec-editor" style="height:100%">
             <md-button
               class="md-raised"
               @click="goToDataVoyager()"
+              :disabled="sparqlError"
             >
               Browse Data Voyager
             </md-button>
@@ -75,8 +77,12 @@
       </div>
     </template>
     <template slot="paneR">
-      Preview
-      <div>
+      <div v-if="sparqlError">
+        <md-content class="md-accent">
+          The SPARQL query failed to execute.  Please ensure syntax is valid and try again.
+        </md-content>
+      </div>
+      <div v-else>
         <div style="text-align: right;">
           <a @click.prevent="previewPane=true"  class="viz-editor-tabs-item" :class="{tabselected:previewPane}">
             Chart
