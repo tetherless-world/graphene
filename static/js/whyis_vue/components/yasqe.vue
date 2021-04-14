@@ -24,6 +24,11 @@ export default Vue.component('yasqe', {
             default: false
         }
     },
+    data() {
+        return {
+            editorValue: this.value
+        }
+    },
     mounted () {
         const yasqeContext = this
         this.yasqe = window.YASQE(this.$el, {
@@ -33,8 +38,9 @@ export default Vue.component('yasqe', {
                 endpoint: this.endpoint,
                 requestMethod: "POST",
                 callbacks: {
-                    error () {
-                        console.error('YASQE query error', arguments)
+                    error (error) {
+                        console.error('YASQE query error', error)
+                        yasqeContext.$emit('query-error', error)
                     },
                     success (resp) {
                         yasqeContext.$emit('query-success', resp)
@@ -45,14 +51,16 @@ export default Vue.component('yasqe', {
         })
         this.yasqe.setValue(this.value)
         this.yasqe.on('changes', () => {
-            console.log('eyyy')
-            yasqeContext.$emit('input', yasqeContext.yasqe.getValue())
+            this.editorValue = yasqeContext.yasqe.getValue()
+            yasqeContext.$emit('input', this.editorValue)
         })
         this.yasqe.setSize("100%", "100%")
     },
     watch: {
-        value() {
-            this.yasqe.setValue(this.value)
+        value(value) {
+            if (value !== this.editorValue) {
+                this.yasqe.setValue(value)
+            }
         }
     }
 })

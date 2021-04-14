@@ -15,6 +15,7 @@ export default Vue.component('vega-editor', {
   data() {
     return {
       loading: false,
+      sparqlError: false,
       showAllTabBtn: false,
       showAllTabs: {display: 'none'},
       paneResize: 18,
@@ -85,11 +86,23 @@ export default Vue.component('vega-editor', {
       }
     },
     async getSparqlData () {
-      const results = await querySparql(this.query)
-      this.onQuerySuccess(results)
+      try {
+        const results = await querySparql(this.query)
+        this.onQuerySuccess(results)
+      } catch (error) {
+        this.onQueryError(error)
+      }
     },
     onQuerySuccess (results) {
+      this.sparqlError = false
       this.results = results
+    },
+    onQueryError (error) {
+      this.sparqlError = true
+      console.warn('SPARQL QUERY ERROR\n', error)
+    },
+    isSparqlError() {
+      return this.sparqlError
     },
     onSpecJsonError () {
       console.log('bad', arguments)
