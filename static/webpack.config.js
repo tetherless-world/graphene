@@ -64,8 +64,7 @@ module.exports = (env, argv) => ({
         use: [{
           loader:'file-loader',
           options: {
-            // path: path.resolve(__dirname, 'dist'),
-            // publicPath: path.resolve(__dirname, 'dist'),
+            publicPath: path.join('static', 'dist'),
             esModule: false
           }
         }],
