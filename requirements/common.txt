@@ -16,7 +16,7 @@ cffi==1.12.3
 chardet==3.0.4
 Click==7.0
 cookiecutter==1.6.0
-cryptography==3.2
+cryptography==3.3.2
 Cython==0.29.10
 fabric==2.4.0
 filedepot==0.8.0
