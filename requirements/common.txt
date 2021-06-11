@@ -37,7 +37,7 @@ invoke==1.2.0
 isodate==0.6.0
 itsdangerous==1.1.0
 javabridge==1.0.18
-Jinja2==2.10.1
+Jinja2==2.11.3
 jinja2-time==0.2.0
 keepalive==0.5
 kombu==4.6.4
