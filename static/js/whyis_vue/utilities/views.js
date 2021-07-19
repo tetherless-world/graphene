@@ -16,7 +16,12 @@ function getCurrentView () {
 }
 
 function getViewUrl(uri, view) {
-  return `${ROOT_URL}about?view=${view}&uri=${uri}`
+    if (view != null) {
+        return `${ROOT_URL}about?view=${view}&uri=${uri}`
+    }
+    else {
+        return `${ROOT_URL}about?uri=${uri}`
+    }
 }
 
 function goToView(uri, view, args) {

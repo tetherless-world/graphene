@@ -1,5 +1,32 @@
-{% extends "base_vue.html" %}
+{% extends "base.html" %}
 {% block title %}SPARQL Query Interface{% endblock %}
+{% block styles %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>YASGUI</title>
+    <link href='//cdn.jsdelivr.net/yasgui/2.5.0/yasgui.min.css' rel='stylesheet' type='text/css'/>
+    <style>
+      .yasgui .endpointText {display:none !important;}
+    </style>
+{% endblock %}
 {% block content %}
-  <vega-sparql></vega-sparql>      
+    <div id='yasgui'></div>
+    <script src='//cdn.jsdelivr.net/yasgui/2.5.0/yasgui.min.js'></script>
+    <script type="text/javascript">
+      var yasgui = YASGUI(document.getElementById("yasgui"), {
+        yasqe:{
+          sparql:{
+            endpoint:'{{endpoint}}',
+            requestMethod: "POST"
+          }
+        },
+        yasr : {
+          table : {
+            fetchTitlesFromPrefLabel : false
+          }
+        }
+    });
+    </script>
+
 {% endblock %}

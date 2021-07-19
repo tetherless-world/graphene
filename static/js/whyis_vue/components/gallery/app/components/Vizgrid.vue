@@ -1,6 +1,6 @@
 <template>
     <div class="">
-        <spinner :loading="loading" text='Loading charts...' v-if="loading"/>
+        <spinner :loading="loading" text='Loading...' v-if="loading"/>
         <div class="utility-roverflow" v-else>
             <div class="utility-content__result">
                 <!-- TODO TIME TO RESULT -->
@@ -11,7 +11,7 @@
             </div>
             <div class="viz-content">
                 <md-card v-for="(result, index) in newResults" :key="index" class="btn--animated">
-                    <div class="utility-gridicon" v-if="authenticated && authenticated.admin=='True'">
+                    <!--<div class="utility-gridicon" v-if="authenticated && authenticated.admin=='True'">
                         <div @click.prevent="bookmark(result.name, true)" v-if="result.bookmark"><md-icon>bookmark</md-icon></div>
                         <div @click.prevent="bookmark(result.name, false)" v-else><md-icon>bookmark_border</md-icon></div>
                         <div @click.prevent="deleteChart(result)"><md-icon>delete_outline</md-icon></div>
@@ -19,17 +19,18 @@
                     <div class="utility-gridicon" v-else-if="authenticated">
                         <div @click.prevent="bookmark(result.name, true)" v-if="result.bookmark"><md-icon>bookmark</md-icon></div>
                         <div @click.prevent="bookmark(result.name, false)" v-else><md-icon>bookmark_border</md-icon></div>
-                    </div>
-                    <md-card-media-cover md-solid @click.native.prevent="navigate(result)">
-                        <md-card-media md-ratio="4:3">
-                        <img :src="result.backup.depiction" :alt="result.backup.title">
+                    </div>-->
+                    <md-card-media-cover md-solid @click.native.prevent="navigate(result)" >
+                        <md-card-media md-ratio="4:3" >
+                        <img :src="getViewUrl(result.thumbnail)" :alt="result.label" v-if="result.thumbnail">
+                        <img :src="$root.$data.root_url + 'static/images/rdf_flyer.svg'" :alt="result.label" v-else>
                         </md-card-media>
                         <md-card-area class="utility-gridbg">
                             <md-card-header class="utility-show_hide">
                                 <span class="md-subheading">
-                                    <strong>{{ result.backup.title }}</strong>
+                                    <strong>{{ result.label }}</strong>
                                 </span>
-                                <span class="md-body-1">{{ reduceDescription(result.backup.description) }}</span>
+                                <span class="md-body-1">{{ reduceDescription(result.description) }}</span>
                             </md-card-header>
                         </md-card-area>
                     </md-card-media-cover>
@@ -42,10 +43,21 @@
 <style scoped lang="scss" src="../../../../assets/css/main.scss"></style>
 <script>
     import { EventServices, Slug } from '../../../../modules'
+    import { getViewUrl } from '../../../../utilities/views'
     import pagination from './Pagination'
+    import axios from 'axios'
     export default {
         name: "viz-grid",
-        props: ['authenticated'],
+        props:{
+          authenticated: {
+            type: Boolean,
+            require: true
+          },
+          instancetype: {
+            type: String,
+            require: true
+          }
+        },
         data() {
             return {
                 results: [],
@@ -96,8 +108,9 @@
                 })
                 return this.newResults = newArr;
             },
+            getViewUrl(uri, view) { return getViewUrl(uri, view) },
             navigate(args) {
-                return window.location = args.backup.uri
+                return window.location = args.identifier
             },
             reduceDescription(args) {
                 let arr, arrSplice, res
@@ -111,25 +124,34 @@
                 return EventServices.createChartBookMark(args, exist);
             },
             deleteChart(chart){
-                return EventServices.$emit("dialoguebox", {status: true, delete: true, title: "Delete Chart", message: `Are you sure you want to delete this chart?`, chart})
+                return EventServices.$emit("dialoguebox", {status: true, delete: true, title: "Delete", message: `Are you sure you want to delete this chart?`, chart})
             },
-            async loadAllCharts(){
-                this.loading = true
-                const vvodd = await EventServices.getVizOfTheDayStatus()
-                const result = await EventServices.fetchAllCharts()
-                if(result.length > 0 && vvodd.status == true){
-                    let viz = result[0];
-                    if("backup" in viz){
-                        this.loading = false
-                        // return window.location = viz.backup.uri
-                    }
-                }
-                return this.loading = false
-            }
+
         },
-        beforeMount(){
-            return this.loadAllCharts()
+        async mounted (){
+            this.loading = true
+            // Commenting out VOTD until we can figure out how to do it generically.
+            //const vvodd = false // await EventServices.getVizOfTheDayStatus()
+            //const result = await EventServices.fetchInstances(this.type)
+            const result = await axios.get(`${ROOT_URL}about`,
+                                           { params: {
+                                               view: "instances",
+                                               uri: this.instancetype
+                                             }
+                                           })
+            this.results = result.data
+            //if(result.length > 0 && vvodd.status == true){
+            //    let viz = result[0];
+            //    if("backup" in viz){
+            //        this.loading = false
+            //        // return window.location = viz.backup.uri
+            //    }
+            //}
+            this.loading = false
         },
+        //beforeMount(){
+        //    return this.loadAllInstances()
+        //},
         created(){
             EventServices
             .$on("appstate", (data) => {

@@ -16,6 +16,7 @@ import { getCharts } from '../../utilities/vega-chart';
 import { listNanopubs, deleteNanopub } from '../../utilities/nanopub';
 
 /** NEEDED FOR NANOMINE */
+// JPM: if this is nanomine specific, it has no business being in this repository.
 const LOCAL_DEV_SERVER = 'http://localhost:8000/nmr/chart';
 const SERVER = `${window.location.origin}/nmr/chart`;
 const URL = SERVER;
@@ -42,7 +43,7 @@ const controller = {
 
   navTo(args, uri){
     if(uri){
-      return window.location = `${window.location.origin}/about?view=${args}&uri=http:%2F%2Fsemanticscience.org%2Fresource%2FChart`;
+      return window.location = `${window.location.origin}/about?view=${args}&uri=${encodeURIComponent(uri)}`;
     }
     return window.location=args
   },
@@ -85,7 +86,7 @@ const controller = {
   },
 
   async loadVisualization (args) {
-    /** passing view=instances&uri=this.parsedArg */ 
+    /** passing view=instances&uri=this.parsedArg */
     let data, processedData, uri;
     uri = NODE_URI
     const pageUri = getViewUrl(args, "instances")
@@ -103,7 +104,7 @@ const controller = {
     if(result.length > 0){
       result.forEach(el => {
         res.push({
-          backup: el, 
+          backup: el,
           creator:'testuser',
           bookmarked : [ ],
           tags : [ ],
@@ -133,7 +134,7 @@ const controller = {
           const filter = await result.filter(function(o1){
             return existingBookmark.some(function(o2){
               if(o2 && o2.chart){
-                return o1.name === o2.chart.name;          
+                return o1.name === o2.chart.name;
               }
             });
           })
@@ -297,7 +298,7 @@ const controller = {
       }
     }
   },
-  
+
   async getVizOfTheDayStatus(){
     const status = await JSON.parse(localStorage.getItem('vodd'));
     return status

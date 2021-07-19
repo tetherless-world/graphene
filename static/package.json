@@ -46,6 +46,7 @@
   "scripts": {
     "lint": "eslint",
     "start": "webpack --mode development --watch",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "build-dev": "webpack --mode development"
   }
 }
